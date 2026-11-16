@@ -1,54 +1,76 @@
-# Sistema de Gerenciamento - Backend e Frontend
+<h1 align="center">🖥️ Gerenciamento de TI</h1>
 
-Este projeto é um sistema de gerenciamento completo, composto por um backend em **Python (Flask)** e um frontend em **React** com **Styled Components**. O sistema é projetado para gerenciar usuários e acessar diferentes painéis de controle com base nas permissões dos usuários.
+<p align="center">
+  Sistema full stack de gestão de usuários com autenticação JWT e controle de acesso por perfil (Admin, Gestor e Usuário).
+</p>
 
-## Visão Geral
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white"/>
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"/>
+  <img src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"/>
+</p>
 
-### Backend
+## Sobre
 
-O backend fornece uma API RESTful para gerenciar usuários, autenticação e acesso a diferentes áreas da aplicação. Ele é desenvolvido em Python usando o Flask e utiliza SQLite como banco de dados.
+Aplicação dividida em **API REST (Node.js + Express)** e **front-end (Next.js 14)**. Cada usuário tem um perfil que define quais painéis e operações ele pode acessar.
 
-**Funcionalidades Principais:**
+### Funcionalidades
+- Login com **JWT** e senhas com hash (**bcrypt**)
+- Cadastro de usuários restrito a Admin/Gestor
+- CRUD de usuários (Admin)
+- Painéis diferentes por perfil: Dashboard, Gestor e Admin
+- Rotas protegidas no front-end (`ProtectedRoute` + `AuthContext`)
+- Validação de formulários com **React Hook Form + Zod**
 
-- **Autenticação e Registro:** Endpoints para registro e login de usuários. O sistema usa JWT para autenticação.
-- **Gerenciamento de Usuários:** CRUD completo para usuários, com diferentes permissões (Admin, Gestor, User).
-- **Painéis de Controle:** Endpoints para exibir diferentes painéis com base nas permissões do usuário (Dashboard, Gestor, Admin).
+## Arquitetura
 
-**Endpoints Principais:**
+```
+Gerenciamento-de-TI/
+├── backend/            # API REST
+│   ├── app.js          # Entrada da aplicação (porta 5000)
+│   ├── config/         # Conexão Sequelize/SQLite
+│   ├── middlewares/    # Middleware de autenticação JWT
+│   ├── models/         # Model Usuario
+│   └── routes/         # /auth e /user
+└── frontend/           # Next.js (App Router)
+    └── app/
+        ├── login/  register/  profile/  admin/
+        ├── components/  context/  utils/
+```
 
-- `POST /register`: Registra um novo usuário. (Requer autenticação JWT com permissões de Admin ou Gestor)
-- `POST /login`: Faz login e retorna um token de acesso JWT.
-- `GET /user`: Obtém informações do usuário autenticado.
-- `GET /users`: Lista todos os usuários. (Requer autenticação JWT com permissões de Admin)
-- `PUT /users/<id>`: Atualiza as informações de um usuário específico. (Requer autenticação JWT com permissões de Admin)
-- `DELETE /users/<id>`: Remove um usuário específico. (Requer autenticação JWT com permissões de Admin)
-- `GET /dashboard`: Exibe o painel de controle. (Requer autenticação JWT)
-- `GET /gestor`: Exibe o painel do Gestor. (Requer autenticação JWT com permissões de Admin ou Gestor)
-- `GET /admin`: Exibe o painel do Admin. (Requer autenticação JWT com permissões de Admin)
+## Endpoints
 
-### Frontend
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| POST | `/auth/login` | Público | Autentica e retorna o token |
+| POST | `/auth/register` | Admin / Gestor | Cadastra usuário |
+| GET | `/auth/user` | Autenticado | Dados do usuário logado |
+| GET | `/user/users` | Admin | Lista usuários |
+| PUT | `/user/users/:id` | Admin | Atualiza usuário |
+| DELETE | `/user/users/:id` | Admin | Remove usuário |
+| GET | `/user/dashboard` · `/user/gestor` · `/user/admin` | Por perfil | Painéis |
 
-O frontend é desenvolvido em **React** e **Styled Components**, oferecendo uma interface intuitiva para interagir com a API e gerenciar o sistema.
+## Como rodar
 
-**Funcionalidades Principais:**
+**Backend**
+```bash
+cd backend
+cp .env.example .env   # defina JWT_SECRET_KEY
+npm install
+npm start              # http://localhost:5000
+```
 
-- **Autenticação e Registro:** Páginas para login e registro de usuários, com validação de formulários.
-- **Painéis de Controle:** Diferentes páginas para os painéis de Dashboard, Gestor e Admin, com base nas permissões do usuário.
-- **Proteção de Rotas:** Uso de rotas protegidas para garantir que apenas usuários autenticados e autorizados possam acessar certas páginas.
-- **Feedback Visual:** Componentes de loading para informar o usuário sobre o status das operações.
+**Frontend**
+```bash
+cd frontend
+npm install
+npm run dev            # http://localhost:3000
+```
+> Ajuste `API_BASE_URL` em `frontend/app/config/config.js` para `http://localhost:5000` ao rodar localmente.
 
-**Estrutura dos Componentes:**
+## Autor
 
-- `App.js`: Configura as rotas da aplicação e protege-as com base nas permissões do usuário.
-- `index.js`: Ponto de entrada da aplicação, configura o React e aplica estilos globais.
-- `components/Loading.js`: Exibe uma animação de carregamento.
-- `components/ProtectedRoute.js`: Protege rotas para garantir que usuários autenticados e autorizados possam acessá-las.
-- `components/StyledComponents.js`: Define componentes estilizados com `Styled Components`.
-- `config/axiosConfig.js`: Configura a instância do Axios para requisições HTTP.
-- `context/AuthContext.js`: Gerencia o estado de autenticação e fornece funções para login e logout.
-- `pages/Login.js`: Página de login.
-- `pages/Register.js`: Página de registro de novos usuários.
-- `pages/Dashboard.js`: Página principal do painel de controle.
-- `pages/Profile.js`: Página de perfil do usuário.
-- `pages/Admin.js`: Página específica para administradores.
-- `utils/validation.js`: Define esquemas de validação para formulários.
+Feito por **Ryan Mendes** · [LinkedIn](https://www.linkedin.com/in/ryan-mendes-b7197322a/)
