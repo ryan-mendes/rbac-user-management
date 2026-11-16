@@ -1,76 +1,65 @@
-<h1 align="center">🖥️ Gerenciamento de TI</h1>
+# RBAC User Management
 
-<p align="center">
-  Sistema full stack de gestão de usuários com autenticação JWT e controle de acesso por perfil (Admin, Gestor e Usuário).
-</p>
+Full-stack user management system with JWT authentication and role-based access control. Three roles (Admin, Manager and User) determine which dashboards and operations each person can access.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white"/>
-  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"/>
-  <img src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"/>
-</p>
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)
+![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?logo=sequelize&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=nextdotjs&logoColor=white)
 
-## Sobre
+## Features
 
-Aplicação dividida em **API REST (Node.js + Express)** e **front-end (Next.js 14)**. Cada usuário tem um perfil que define quais painéis e operações ele pode acessar.
+- JWT login with bcrypt password hashing
+- Role-based authorization (Admin, Manager, User)
+- User CRUD restricted to administrators
+- Registration restricted to Admin and Manager
+- Protected routes on the client (`AuthContext` + `ProtectedRoute`)
+- Form validation with React Hook Form and Zod
 
-### Funcionalidades
-- Login com **JWT** e senhas com hash (**bcrypt**)
-- Cadastro de usuários restrito a Admin/Gestor
-- CRUD de usuários (Admin)
-- Painéis diferentes por perfil: Dashboard, Gestor e Admin
-- Rotas protegidas no front-end (`ProtectedRoute` + `AuthContext`)
-- Validação de formulários com **React Hook Form + Zod**
-
-## Arquitetura
+## Architecture
 
 ```
-Gerenciamento-de-TI/
-├── backend/            # API REST
-│   ├── app.js          # Entrada da aplicação (porta 5000)
-│   ├── config/         # Conexão Sequelize/SQLite
-│   ├── middlewares/    # Middleware de autenticação JWT
-│   ├── models/         # Model Usuario
-│   └── routes/         # /auth e /user
-└── frontend/           # Next.js (App Router)
+├── backend/                 Express REST API (port 5000)
+│   ├── app.js
+│   ├── config/              Sequelize + SQLite connection
+│   ├── middlewares/         JWT authentication
+│   ├── models/              User model
+│   └── routes/              /auth and /user
+└── frontend/                Next.js 14 (App Router)
     └── app/
         ├── login/  register/  profile/  admin/
-        ├── components/  context/  utils/
+        └── components/  context/  utils/
 ```
 
-## Endpoints
+## API
 
-| Método | Rota | Acesso | Descrição |
+| Method | Route | Access | Description |
 |---|---|---|---|
-| POST | `/auth/login` | Público | Autentica e retorna o token |
-| POST | `/auth/register` | Admin / Gestor | Cadastra usuário |
-| GET | `/auth/user` | Autenticado | Dados do usuário logado |
-| GET | `/user/users` | Admin | Lista usuários |
-| PUT | `/user/users/:id` | Admin | Atualiza usuário |
-| DELETE | `/user/users/:id` | Admin | Remove usuário |
-| GET | `/user/dashboard` · `/user/gestor` · `/user/admin` | Por perfil | Painéis |
+| POST | `/auth/login` | Public | Authenticate and return a token |
+| POST | `/auth/register` | Admin, Manager | Create a user |
+| GET | `/auth/user` | Authenticated | Current user |
+| GET | `/user/users` | Admin | List users |
+| PUT | `/user/users/:id` | Admin | Update a user |
+| DELETE | `/user/users/:id` | Admin | Delete a user |
+| GET | `/user/dashboard`, `/user/gestor`, `/user/admin` | By role | Dashboards |
 
-## Como rodar
+## Getting started
 
 **Backend**
+
 ```bash
 cd backend
-cp .env.example .env   # defina JWT_SECRET_KEY
+cp .env.example .env      # set JWT_SECRET_KEY
 npm install
-npm start              # http://localhost:5000
+npm start                 # http://localhost:5000
 ```
 
 **Frontend**
+
 ```bash
 cd frontend
 npm install
-npm run dev            # http://localhost:3000
+npm run dev               # http://localhost:3000
 ```
-> Ajuste `API_BASE_URL` em `frontend/app/config/config.js` para `http://localhost:5000` ao rodar localmente.
 
-## Autor
-
-Feito por **Ryan Mendes** · [LinkedIn](https://www.linkedin.com/in/ryan-mendes-b7197322a/)
+Set `API_BASE_URL` in `frontend/app/config/config.js` to `http://localhost:5000` when running locally.
